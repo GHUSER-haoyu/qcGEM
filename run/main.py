@@ -17,7 +17,7 @@ from torch_geometric.loader import DataLoader
 import torch.nn.init as init  
 
 import models
-from dataset_pyg import MyDataset_batch_hdf5
+from dataset_pyg import qcGEM_Data
 from cal_loss import Loss_GNE
 
 """
@@ -103,15 +103,17 @@ parser.add_argument('--device', type=str, default='cuda:0',
 parser.add_argument('--seed', type=int, default=42, metavar='N',
                     help='Random seed.')
 
-parser.add_argument('--root_path', type=str, default='/dataset/', metavar='N',
+parser.add_argument('--root_path', type=str, default='../data/', metavar='N',
                     help='The root path of dataset.')
-parser.add_argument('--fape_path', type=str, default='/dataset/fape.npz', metavar='N',
+parser.add_argument('--fape_path', type=str, default='../data/fape.npz', metavar='N',
                     help='The path of FAPE npy file.')
-parser.add_argument('--save_path', type=str, default='/model/model_save_path', metavar='N',
+parser.add_argument('--save_path', type=str, default='../model', metavar='N',
                     help='The path to save the model.')
-parser.add_argument('--pretrained_path', type=str, default='/model/model_save_path', metavar='N',
+parser.add_argument('--log_file_path', type=str, default='../log_file', metavar='N',
+                    help='The path to save the model.')
+parser.add_argument('--pretrained_path', type=str, default='../model', metavar='N',
                     help='The path of pretrained model.')
-parser.add_argument('--pretrained_model', type=str, default='saved_model.pt', metavar='N',
+parser.add_argument('--pretrained_model', type=str, default='qcGEM_ckpt_Index649.pt', metavar='N',
                     help='The name of pretrained model.')
 
 args = parser.parse_args()
@@ -131,10 +133,9 @@ def setting(args):
 
     print(" \n ##########   Log the Train and Validation Args   ########## \n")
     if args.log_file_name == 'None':
-        log_file_name = str(time.perf_counter()).replace('.', '')
-        print("ReInit the log file name : {}".format(log_file_name))
+        args.log_file_name = str(time.perf_counter()).replace('.', '')
+        print(f"ReInit the log file name : {args.log_file_name}")
     else:
-        log_file_name = args.log_file_name
         print("Use the passed log file name.")
 
     if args.no_cpu == False:
@@ -147,7 +148,7 @@ def setting(args):
     for k,v in sorted(vars(args).items()):
         print(' ====', k,':',v)
 
-    return args, log_file_name
+    return args
 
 """
 Loading model
@@ -167,33 +168,42 @@ def build_model(args):
                     encoder_layers = args.encoder_layers, decoder_layers = args.decoder_layers,
                     gm_cutoff = args.gm_cutoff, gm_output_dim = args.gm_output_dim, gm_interact_time = args.gm_interact_time, gm_layer_num = args.gm_layer_num)
 
-    print(" ==== The total num of parameters is {}, Encoder is {}, Decoder is {}.".format(sum(p.numel() for p in model.parameters()), sum(p.numel() for p in model.encoder.parameters()), sum(p.numel() for p in model.decoder.parameters())))
+    num_1 = sum(p.numel() for p in model.parameters())
+    num_2 = sum(p.numel() for p in model.encoder.parameters())
+    num_3 = sum(p.numel() for p in model.decoder.parameters())
+    print(f' ==== The total num of parameters is {num_1}, Encoder is {num_2}, Decoder is {num_3}.')
 
     if args.pretrained == True:
-        pre_trained_model_state = torch.load('{}/{}'.format(args.pretrained_path, args.pretrained_model), map_location=torch.device(args.device))
+        pre_trained_model_state = torch.load(f'{args.pretrained_path}/{args.pretrained_model}', map_location=torch.device(args.device))
         model.load_state_dict(pre_trained_model_state['model_state_dict'], strict=True)
     else:
         pass
 
     return args, model
 
+"""
+Loading optimizer
+"""
 def build_optimizer(args, model):
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     return args, optimizer
 
+"""
+Data loading
+"""
 def build_dataset(args):
-    FAPE = np.load(args.fape_path, allow_pickle=True)
-    DataSet = MyDataset_batch_hdf5(root = args.root_path, dataset = args.pretrain_set, split_mode = args.pretrain_set_split_method, split_seed = args.seed)
-    DataLoader_train = DataLoader(DataSet.train, batch_size=args.batch_size, shuffle = args.shuffle)
-    DataLoader_val = DataLoader(DataSet.val, batch_size=args.batch_size, shuffle = False)
+    fape = np.load(args.fape_path, allow_pickle=True)
+    DataSet = qcGEM_Data(root = args.root_path, dataset = args.pretrain_set, split_mode = args.pretrain_set_split_method, split_seed = args.seed)
+    data_loader_train = DataLoader(DataSet.train, batch_size=args.batch_size, shuffle = args.shuffle)
+    data_loader_valid = DataLoader(DataSet.val, batch_size=args.batch_size, shuffle = False)
 
-    return args, DataLoader_train, DataLoader_val, FAPE
+    return args, data_loader_train, data_loader_valid, fape
 
 """
 Traning and validation functions
 """
-def train(epoch, loader, loss_logger):
+def train(args, epoch, loader, loss_logger, fape):
     total_grad = 0
     loss_logger = {key: 0 for key in loss_logger.keys()}
     loss_logger['epoch_num'] = epoch
@@ -218,7 +228,7 @@ def train(epoch, loader, loss_logger):
         optimizer.zero_grad()
     return loss_logger
 
-def valid(epoch, loader, loss_logger):
+def valid(args, epoch, loader, loss_logger, fape):
     loss_logger = {key: 0 for key in loss_logger.keys()}
     loss_logger['epoch_num'] = epoch
     loss_logger['pattern'] = 'valid'
@@ -242,11 +252,11 @@ Run the training and validation process
 """
 def main():
 
-    global args, log_file_name, model, optimizer, DataLoader_train, DataLoader_val, FAPE
-    args, log_file_name = setting(args)
+    global args, model, optimizer, data_loader_train, data_loader_valid, FAPE
+    args = setting(args)
     args, model = build_model(args)
     args, optimizer = build_optimizer(args, model)
-    args, DataLoader_train, DataLoader_val, FAPE = build_dataset(args)
+    args, data_loader_train, data_loader_valid, fape = build_dataset(args)
 
     print(" \n ########## The training and validation process ########## \n")
     train_loss_min = 1000
@@ -268,37 +278,41 @@ def main():
 
     for epoch in range(args.epochs):
         epoch += 1
-        print('=== Train & Valid Epoch {} ==='.format(epoch))
+        print(f'=== Train & Valid Epoch {epoch} ===')
 
         timer_1 = time.perf_counter()
-        loss_logger = train(epoch, DataLoader_train, loss_logger)
+        loss_logger = train(args, epoch, data_loader_train, loss_logger, fape)
         timer_2 = time.perf_counter()
         loss_logger['timer'] = timer_2 - timer_1
         epoch_train_loss = loss_logger['Total_Loss'] / loss_logger['sample_times']
         LOSS_LOGGER.loc[len(LOSS_LOGGER)] = loss_logger.values()
 
-        loss_logger = valid(epoch, DataLoader_val, loss_logger)
+        loss_logger = valid(args, epoch, data_loader_valid, loss_logger, fape)
         timer_3 = time.perf_counter()
         loss_logger['timer'] = timer_3 - timer_2
         epoch_valid_loss = loss_logger['Total_Loss'] / loss_logger['sample_times']
         LOSS_LOGGER.loc[len(LOSS_LOGGER)] = loss_logger.values()
 
-        LOSS_LOGGER.to_csv('./LOGGER_{}.csv'.format(log_file_name))
+        LOSS_LOGGER.to_csv(f'{args.log_file_path}/LOGGER_{args.log_file_name}.csv')
 
         if train_loss_min > epoch_train_loss and valid_loss_min > epoch_valid_loss:
             train_loss_min = epoch_train_loss
             valid_loss_min = epoch_valid_loss
             Save_model_time = time.perf_counter()
-            print("Epoch {} has the best training and validation loss {} / {} ".format(epoch, epoch_train_loss, epoch_valid_loss))
-            print('Save the model : Epo_{}_Seed_{}_T{}.pt'.format(epoch, args.seed, Save_model_time))
+            print(f'Epoch {epoch} has the best training and validation loss : {epoch_train_loss} / {epoch_valid_loss}')
+            print(f'Save the model : Epo_{epoch}_Seed_{args.seed}_T{Save_model_time}.pt')
             sys.stdout.flush()
             torch.save({'epochs':epoch, 'model_state_dict':model.state_dict(), 'optimizer_state_dict':optimizer.state_dict()}, 
-            args.save_path + '/Epo_{}_Seed_{}_T{}.pt'.format(epoch, args.seed, Save_model_time))
+            args.save_path + f'/Epo_{epoch}_Seed_{args.seed}_T_{Save_model_time}.pt')
         else:
-            print('Epoch {} not the best, the loss is {} / {} '.format(epoch, epoch_train_loss, epoch_valid_loss))
+            print(f'Epoch {epoch} not the best, the loss is {epoch_train_loss} / {epoch_valid_loss}')
             sys.stdout.flush()
 
-
+"""
+main
+"""
 if __name__ == "__main__":
     main()
+
+
 

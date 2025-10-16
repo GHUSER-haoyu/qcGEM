@@ -8,41 +8,39 @@ import numpy as np
 from tqdm import tqdm
 from torch_geometric.data import Data, InMemoryDataset, download_url, Dataset
 
-class MyDataset_batch_hdf5(InMemoryDataset):
+class qcGEM_Data(InMemoryDataset):
 
     def __init__(self, root, dataset=None, split_mode='random', split_seed=0, transform=None, pre_transform=None, pre_filter=None):
         assert dataset in ['20250101']
         assert split_mode in ['random', 'scaffold']
 
-        self.name = 'PreTrain_data_20250101'
+        self.root = root
         self.dataset = dataset
         self.split_seed = split_seed
         self.split_mode = split_mode
 
-        super(MyDataset_batch_hdf5, self).__init__(root, transform, pre_transform, pre_filter)
+        super(qcGEM_Data, self).__init__(root, transform, pre_transform, pre_filter)
 
-        self.data, self.slices = torch.load(osp.join(self.processed_dir, '{}_processed.pt'.format(self.dataset)))
+        self.data, self.slices = torch.load(f'{self.processed_dir}/{self.dataset}_processed.pt')
         trn, val = self.split(type = self.split_mode, seed = self.split_seed)
         self.train, self.val = trn, val
 
     @property
     def raw_dir(self):
-        return '/export/disk6/why/workbench/MERGE/DataSet/PreTrain_data_20250101/raw'
+        return f'{self.root}/raw'
 
     @property
     def processed_dir(self):
-        return osp.join(self.root, self.name, 'processed/{}'.format(self.dataset))
+        return f'{self.root}/processed/{self.dataset}'
 
     @property
     def raw_file_names(self):
-        name = [ 
-        'PubChemQC_PreTrain_{}.hdf5'.format(self.dataset),
-        ]
+        name = [f'{self.dataset}_raw.hdf5']
         return name
 
     @property
     def processed_file_names(self):
-        return ['{}_processed.pt'.format(self.dataset)]
+        return [f'{self.dataset}_processed.pt']
     
     def process(self):
         """
@@ -50,7 +48,7 @@ class MyDataset_batch_hdf5(InMemoryDataset):
         """
         data_list = []
 
-        with h5py.File(f'{self.raw_dir}/PubChemQC_PreTrain_{self.dataset}.hdf5', 'r') as all_data_hdf5:
+        with h5py.File(f'{self.raw_dir}/{self.dataset}_raw.hdf5', 'r') as all_data_hdf5:
 
             all_molecular_list = list(all_data_hdf5.keys())
 
@@ -84,10 +82,10 @@ class MyDataset_batch_hdf5(InMemoryDataset):
         if self.pre_transform is not None:
             data_list = [self.pre_transform(data) for data in data_list]
 
-        torch.save(self.collate(data_list), osp.join(self.processed_dir, '{}_processed.pt'.format(self.dataset)))
+        torch.save(self.collate(data_list), f'{self.processed_dir}/{self.dataset}_processed.pt')
 
     def split(self, type, seed):
-        file_path = osp.join(self.processed_dir, '{}_{}_{}.pt'.format(self.dataset, self.split_mode, self.split_seed))
+        file_path = osp.join(f'{self.processed_dir}/{self.dataset}_{self.split_mode}_{self.split_seed}.pt')
         if os.path.exists(file_path):
             trn, val = torch.load(file_path)
             return trn, val
