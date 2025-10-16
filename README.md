@@ -2,9 +2,11 @@
 💎 qcGEM: a graph-based molecular representation <br> with quantum chemistry awareness
 </h1>
 
-[![Paper](https://img.shields.io/badge/Paper-bioRxiv-blue)]()
-[![Website](https://img.shields.io/badge/Website-qcGEM%20Portal-green)]()
-[![License](https://img.shields.io/badge/License-Academic%20Use-lightgrey.svg)]()
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Paper-bioRxiv-blue"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Website-qcGEM%20Portal-green"></a>
+  <a href="#"><img src="https://img.shields.io/badge/License-Academic%20Use-lightgrey.svg"></a>
+</p>
 
 ---
 
