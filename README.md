@@ -8,6 +8,8 @@
   <a href="#"><img src="https://img.shields.io/badge/License-Academic%20Use-lightgrey.svg"></a>
 </p>
 
+![qcGEM](./fig/qcGEM_github.pdf)
+
 ---
 
 ## 📘 Overview 
