@@ -651,3 +651,5 @@ class GeometryModule_(nn.Module):
 
     def forward(self, pos, z, batch):
         return self._forward(pos, z, batch)
+
+# 20250101

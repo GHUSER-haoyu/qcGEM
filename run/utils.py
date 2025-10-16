@@ -248,3 +248,8 @@ def Vec_Dis_batch_loss(coord, batch_clip_size):
 def get_edges_(n_nodes):
     indices = torch.cartesian_prod(torch.arange(n_nodes), torch.arange(n_nodes))
     return indices.T.tolist()
+
+
+
+
+# 20250101
