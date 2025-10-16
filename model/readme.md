@@ -4,4 +4,4 @@ Please download the model parameters from [Zenodo](https://doi.org/10.5281/zenod
 
 Parameters of qcGEM can be found in `qcGEM_ckpt_Index649.pt` file.
 
-<!-- Please make sure the parameters are stored in the `model` folder (i.e. `model/SPIRED-Fitness.pth` and `model/SPIRED-Stab.pth`). --> 
+Please make sure the parameters are stored in the `model` folder (i.e. `model/qcGEM_ckpt_Index649.pth`). 
