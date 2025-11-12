@@ -46,7 +46,7 @@ If you use qcGEM in your work, please cite:
 
 > Wang, H. & Gong, H. (2025).  
 > **qcGEM: a graph-based molecular representation with quantum chemistry awareness**.  
-> _bioRxiv_. [xxx](xxx)
+> _bioRxiv_. [https://www.biorxiv.org/content/10.1101/2025.11.02.686183v1](https://www.biorxiv.org/content/10.1101/2025.11.02.686183v1)
 
 ---
 
