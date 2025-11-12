@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://www.biorxiv.org/content/10.1101/2025.11.02.686183v1"><img src="https://img.shields.io/badge/Paper-bioRxiv-blue"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Website-qcGEM%20Portal-green"></a>
+  <a href="https://structpred.life.tsinghua.edu.cn/server_qcgem.html"><img src="https://img.shields.io/badge/Website-qcGEM%20Portal-green"></a>
   <a href="#"><img src="https://img.shields.io/badge/License-Academic%20Use-lightgrey.svg"></a>
 </p>
 
@@ -46,7 +46,7 @@ If you use qcGEM in your work, please cite:
 
 > Wang, H. & Gong, H. (2025).  
 > **qcGEM: a graph-based molecular representation with quantum chemistry awareness**.  
-> _bioRxiv_. [Paper](https://www.biorxiv.org/content/10.1101/2025.11.02.686183v1)
+> _bioRxiv_. [Paper Link](https://www.biorxiv.org/content/10.1101/2025.11.02.686183v1)
 
 ---
 
@@ -54,8 +54,8 @@ If you use qcGEM in your work, please cite:
 
 - 🔗 **Model resource:** Available via [Zenodo Repository](https://doi.org/10.5281/zenodo.17364257)
 - 💾 **Dataset (qcMol):** [qcMol Website](https://structpred.life.tsinghua.edu.cn/qcmol/)
-- 💻 **Source Code:** [Code](https://github.com/GHUSER-haoyu/qcGEM)
-- 🧑‍💻 **Web Server:** [Server](https://structpred.life.tsinghua.edu.cn/server_qcgem.html)
+- 💻 **Source Code:** [Code Link](https://github.com/GHUSER-haoyu/qcGEM)
+- 🧑‍💻 **Web Server:** [Server Link](https://structpred.life.tsinghua.edu.cn/server_qcgem.html)
 
 ---
 
