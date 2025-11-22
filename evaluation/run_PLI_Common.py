@@ -247,11 +247,11 @@ def train(epoch, loader, loss_function):
 
     sample_times = len(loader)
 
-    print("\n=H= Train Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
+    print("\n=H= Train Epoch Loss |", epoch, "|", Total_loss / sample_times)
     if args.task_type == 'c':
         if len(set(all_labels)) > 1:
             auc_score = roc_auc_score(all_labels, all_predictions)
-            print("=H= Train Epoch AUC |", epoch + 1, "|", auc_score)
+            print("=H= Train Epoch AUC |", epoch, "|", auc_score)
         else:
             print(f"Epoch {epoch+1} - Only one class present in y_true. AUC score is not defined in this case.")
     else:
@@ -281,11 +281,11 @@ def valid(epoch, loader, loss_function, cliff_loss_function):
             
     sample_times = len(loader)
     
-    print("\n=H= Valid Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
+    print("\n=H= Valid Epoch Loss |", epoch, "|", Total_loss / sample_times)
     if args.task_type == 'c':
         if len(set(all_labels)) > 1:
             auc_score = roc_auc_score(all_labels, all_predictions)
-            print("=H= Valid Epoch AUC |", epoch + 1, "|", auc_score)
+            print("=H= Valid Epoch AUC |", epoch, "|", auc_score)
         else:
         print(f"Epoch {epoch+1} - Only one class present in y_true. AUC score is not defined in this case.")
     else:
@@ -316,11 +316,11 @@ def test(epoch, loader, loss_function, cliff_loss_function):
             
     sample_times = len(loader)
     
-    print("\n=H= Test Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
+    print("\n=H= Test Epoch Loss |", epoch, "|", Total_loss / sample_times)
     if args.task_type == 'c':
         if len(set(all_labels)) > 1:
             auc_score = roc_auc_score(all_labels, all_predictions)
-            print("=H= Test Epoch AUC |", epoch + 1, "|", auc_score)
+            print("=H= Test Epoch AUC |", epoch, "|", auc_score)
         else:
         print(f"Epoch {epoch+1} - Only one class present in y_true. AUC score is not defined in this case.")
     else:
@@ -347,7 +347,7 @@ def main():
     test_loss_min = 1000
 
     for epoch in range(args.epochs):
-        
+        epoch += 1
         time_log1 = time.perf_counter()
         sys.stdout.flush()
         print("=====================================================================")
@@ -370,7 +370,7 @@ def main():
             train_loss_min = epoch_train_loss
             valid_loss_min = epoch_valid_loss
             # torch.save(model.state_dict(), f'../model/PLI_{args.dataset}_{args.data_split_mode}_{args.seed}.ckpt')
-            print("Saved in epoch :", str(epoch + 1))
+            print("Saved in epoch :", str(epoch))
             print("The best training and validation loss: ", train_loss_min, valid_loss_min)
             print('*******************\n')
             test(epoch, data_loader_test, loss_function)

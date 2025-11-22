@@ -271,7 +271,7 @@ def train(epoch, loader, loss_function, preprocess):
 
     sample_times = len(loader)
 
-    print("\n=H= Train Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
+    print("\n=H= Train Epoch Loss |", epoch, "|", Total_loss / sample_times)
     if args.task_type == 'c':
         Total_auc_multi_term = np.array([])
         for i in range(Total_auc_label.shape[1]):
@@ -284,8 +284,8 @@ def train(epoch, loader, loss_function, preprocess):
             except:
                 continue
         Total_auc_multi_term_average = Total_auc_multi_term.mean()
-        print("=H= Train Epoch ACC |", epoch + 1, "|", Total_correct_num / Total_sample_num)
-        print("=H= Train Epoch AUC |", epoch + 1, "|", Total_auc_multi_term_average)
+        print("=H= Train Epoch ACC |", epoch, "|", Total_correct_num / Total_sample_num)
+        print("=H= Train Epoch AUC |", epoch, "|", Total_auc_multi_term_average)
     else:
         pass
 
@@ -331,7 +331,7 @@ def valid(epoch, loader, loss_function, preprocess):
 
     sample_times = len(loader)
     
-    print("\n=H= Valid Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
+    print("\n=H= Valid Epoch Loss |", epoch, "|", Total_loss / sample_times)
     if args.task_type == 'c':
         Total_auc_multi_term = np.array([])
         for i in range(Total_auc_label.shape[1]):
@@ -344,8 +344,8 @@ def valid(epoch, loader, loss_function, preprocess):
             except:
                 continue
         Total_auc_multi_term_average = Total_auc_multi_term.mean()
-        print("=H= Valid Epoch ACC |", epoch + 1, "|", Total_correct_num / Total_sample_num)
-        print("=H= Valid Epoch AUC |", epoch + 1, "|", Total_auc_multi_term_average)
+        print("=H= Valid Epoch ACC |", epoch, "|", Total_correct_num / Total_sample_num)
+        print("=H= Valid Epoch AUC |", epoch, "|", Total_auc_multi_term_average)
     else:
         pass
 
@@ -395,7 +395,7 @@ def test(epoch, loader, loss_function, preprocess):
 
     sample_times = len(loader)
     
-    print("=Result= Loss | Epoch {}, Avearge is {}, Std is {}".format(epoch + 1, Total_loss / sample_times, np.array(Total_loss_list).std()))
+    print("=Result= Loss | Epoch {}, Avearge is {}, Std is {}".format(epoch, Total_loss / sample_times, np.array(Total_loss_list).std()))
 
     if args.task_type == 'c':
         Total_auc_multi_term = np.array([])
@@ -409,8 +409,8 @@ def test(epoch, loader, loss_function, preprocess):
             except:
                 continue
         Total_auc_multi_term_average = Total_auc_multi_term.mean()
-        print("=Result= ACC | Epoch {}, Avearge is {}".format(epoch + 1, Total_correct_num / Total_sample_num))
-        print("=Result= AUC | Epoch {}, Avearge is {}".format(epoch + 1, Total_auc_multi_term_average))
+        print("=Result= ACC | Epoch {}, Avearge is {}".format(epoch, Total_correct_num / Total_sample_num))
+        print("=Result= AUC | Epoch {}, Avearge is {}".format(epoch, Total_auc_multi_term_average))
     else:
         pass
 

@@ -113,6 +113,8 @@ def setting(args):
         pass
 
     loss_function = cal_loss.Regression_loss
+    args.label_num = 1
+    args.r_loss = 'rmse'
 
     for k,v in sorted(vars(args).items()):
         print(' ====', k,':',v)
@@ -232,7 +234,7 @@ def train(epoch, loader, loss_function):
 
     sample_times = len(loader)
 
-    print("\n=H= Train Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
+    print("\n=H= Train Epoch Loss |", epoch, "|", Total_loss / sample_times)
 
     return Total_loss / sample_times
 
@@ -258,7 +260,7 @@ def valid(epoch, loader, loss_function):
 
     sample_times = len(loader)
     
-    print("\n=H= Valid Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
+    print("\n=H= Valid Epoch Loss |", epoch, "|", Total_loss / sample_times)
 
     return Total_loss / sample_times
 
@@ -288,7 +290,7 @@ def test(epoch, loader, loss_function):
 
     sample_times = len(loader)
     
-    print("=Result= Loss | Epoch {}, Avearge is {}, Std is {}".format(epoch + 1, Total_loss / sample_times, np.array(Total_loss_list).std()))
+    print("=Result= Loss | Epoch {}, Avearge is {}, Std is {}".format(epoch, Total_loss / sample_times, np.array(Total_loss_list).std()))
 
     return Total_loss / sample_times
 

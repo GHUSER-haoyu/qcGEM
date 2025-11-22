@@ -325,7 +325,7 @@ class PLI_Opioids_Dataset(InMemoryDataset):
 
     @property
     def processed_dir(self):
-        return f'{self.root}/processed/PLI/Opioids{self.dataset}'
+        return f'{self.root}/processed/PLI/Opioids/{self.dataset}'
 
     @property
     def raw_file_names(self):
@@ -344,8 +344,7 @@ class PLI_Opioids_Dataset(InMemoryDataset):
         task_data_pd = pd.read_csv(f'{self.root}/raw/info/{self.dataset}.csv')
         all_molecular_list = task_data_pd['CID']
 
-        # with h5py.File(f'{self.raw_dir}/Opioids_raw.hdf5', 'r') as all_data_hdf5:
-        with h5py.File(f'/export/disk7/why/dataset/Opioids/h5_file/Opioids_raw.hdf5', 'r') as all_data_hdf5:
+        with h5py.File(f'{self.raw_dir}/Opioids_raw.hdf5', 'r') as all_data_hdf5:
 
             i = 0 
             for idx in tqdm(range(len(all_molecular_list)), desc = f'{i+1}/{len(all_molecular_list)}'):

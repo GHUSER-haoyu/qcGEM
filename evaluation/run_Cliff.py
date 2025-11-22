@@ -214,8 +214,8 @@ def train(epoch, loader, loss_function, cliff_loss_function):
     sample_times = len(loader)
     cliff_mol_loss = cliff_loss_function(y_pred_list, y_label_list, cliff_mol_list)
     
-    print("=H= Train Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
-    print("=H= Train Epoch Cliff Mol |", epoch + 1, "|", cliff_mol_loss)
+    print("=H= Train Epoch Loss |", epoch, "|", Total_loss / sample_times)
+    print("=H= Train Epoch Cliff Mol |", epoch, "|", cliff_mol_loss)
 
     return Total_loss / sample_times, cliff_mol_loss
 
@@ -242,8 +242,8 @@ def test(epoch, loader, loss_function, cliff_loss_function):
     sample_times = len(loader)
     cliff_mol_loss = cliff_loss_function(y_pred_list, y_label_list, cliff_mol_list)
 
-    print("=H= Test Epoch Loss |", epoch + 1, "|", Total_loss / sample_times)
-    print("=H= Test Epoch Cliff Mol |", epoch + 1, "|", cliff_mol_loss)
+    print("=H= Test Epoch Loss |", epoch, "|", Total_loss / sample_times)
+    print("=H= Test Epoch Cliff Mol |", epoch, "|", cliff_mol_loss)
 
     return Total_loss / sample_times, cliff_mol_loss
 
@@ -266,7 +266,7 @@ def main():
     test_loss_min = 1000
 
     for epoch in range(args.epochs):
-        
+        epoch += 1
         time_log1 = time.perf_counter()
         sys.stdout.flush()
         print("=====================================================================")
@@ -289,7 +289,7 @@ def main():
             train_loss_min = epoch_train_loss
             test_loss_min = epoch_test_loss
             # torch.save(model.state_dict(), f'../model/Cliff_{args.dataset}_{args.data_split_mode}_{args.seed}.ckpt')
-            print("Saved in epoch :", str(epoch + 1))
+            print("Saved in epoch :", str(epoch))
             print("The best training and test loss: ", train_loss_min, test_loss_min)
             print("The best training and test cliff mols: ", cliff_train, cliff_test)
             early_stop = 0
