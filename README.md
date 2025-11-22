@@ -40,7 +40,70 @@ Pre-trained on the quantum-chemistry-annotated dataset **qcMol (1.2M molecules)*
 
 ---
 
-## 🧪 Citation
+## 📝 Log & TODO
+
+- Upload the embedding for direct use.
+
+- Provide a more detailed use case with notebook.
+
+- Upload model config.
+
+---
+
+## 📦 Installation
+
+```
+git clone https://github.com/GHUSER-haoyu/qcGEM.git <repo_name>
+
+# create the conda environment
+cd <repo_name>
+conda create -n qcGEM python=3.8
+conda activate qcGEM
+
+# installation
+conda install pytorch==2.0.0 pytorch-cuda=11.7 pyg=2.5.2 pytorch-cluster pytorch-scatter pytorch-sparse cudatoolkit=11.7 -c pytorch -c nvidia -c pyg
+conda install rdkit scikit-learn scipy sympy numpy pandas tqdm h5py
+conda install seaborn matplotlib
+
+# check env list
+conda list
+
+# download and uncompress the weights and dataset, and put them in the model and data directory
+mv path/to/download/weights  model/
+mv path/to/download/dataset data/
+```
+
+The final project structure should look like this:
+
+```
+repo
+├── data
+│   ├── pretrain
+│   ├── evaluation
+|   |── ...
+├── model
+│   ├── model.ckpt
+├── run
+|   |── mian.py
+|   |── models.py
+|   |── utils.py
+|   |── dataset_pyg.py
+|   |── ...
+├── example
+│   ├── example.ipynb
+...
+```
+
+---
+
+## 🔧 Usage
+
+- Please refer to /example/example.ipynb.
+- More details are coming soon.
+
+---
+
+## 📖 Citation
 
 If you use qcGEM in your work, please cite:
 
