@@ -69,28 +69,47 @@ conda install seaborn matplotlib
 conda list
 
 # download and uncompress the weights and dataset, and put them in the model and data directory
-mv path/to/download/weights  model/
-mv path/to/download/dataset data/
+mv path/of/download/weights model/
+mv path/of/download/dataset data/
 ```
 
 The final project structure should look like this:
 
 ```
-repo
-├── data
-│   ├── pretrain
-│   ├── evaluation
-|   |── ...
-├── model
-│   ├── model.ckpt
+<repo_name>
 ├── run
+|   |── log_file
 |   |── mian.py
 |   |── models.py
-|   |── utils.py
+|   |── dataset_pyg.py
+|   |── ...
+├── evaluation
+|   |── log_file
+|   |── run_ADMET.py
+|   |── run_Cliff.py
+|   |── models.py
 |   |── dataset_pyg.py
 |   |── ...
 ├── example
 │   ├── example.ipynb
+├── model
+│   ├── model.ckpt
+├── data
+│   ├── pretrain
+│   │   ├── raw
+│   │   ├── processed
+│   ├── evaluation
+│   │   ├── ADMET
+│   │   │   ├── raw
+│   │   │   ├── processed
+│   │   ├── Cliff
+│   │   │   ├── raw
+│   │   │   ├── processed
+│   │   ├── PLI
+│   │   │   ├── info
+│   │   │   ├── raw
+│   │   │   ├── processed
+│   │   ├── ...
 ...
 ```
 
@@ -98,8 +117,14 @@ repo
 
 ## 🔧 Usage
 
-- Please refer to /example/example.ipynb.
-- More details are coming soon.
+- How to install the environment?
+  - Please refer to the `README.md` and `env/qcGEM_env.yml`.
+- How to perform inference with your own molecule representation?
+  - Please refer to `example/example.ipynb`.
+- How to pretrain the model?
+  - Please refer to `run/main.py`.
+- How to evaluate the model?
+  - Please refer to `evaluation/run_ADMET.py`.
 
 ---
 
