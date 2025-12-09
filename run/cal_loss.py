@@ -6,7 +6,7 @@ from torch.nn import functional as F
 from utils import coord2radial, Vec_Dis_batch_loss, local_coord_shoot, align_GPU
 from collections import Counter
 
-global_features = np.load('../data/pretain/raw/Weight.npz', allow_pickle=True)
+global_features = np.load('../data/pretrain/raw/Weight.npz', allow_pickle=True)
 fp_weight_NoNorm = torch.from_numpy(global_features['fp_weight'])
 fp_weight = (fp_weight_NoNorm + 1e-8) / fp_weight_NoNorm.sum()
 
