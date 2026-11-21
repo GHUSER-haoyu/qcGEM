@@ -1,0 +1,49 @@
+{
+  "release_tag": "v0.1.0",
+  "repository": "GHUSER-haoyu/qcGEM",
+  "release_url": "https://github.com/GHUSER-haoyu/qcGEM/releases/tag/v0.1.0",
+  "distribution_method": "github_releases",
+  "git_lfs_used": false,
+  "assets": [
+    {
+      "filename": "qcgem_student_v1.pt",
+      "format": "qcgem_student_unified_v1",
+      "size_bytes": 165897014,
+      "sha256": "b8f4680e4c6d06d70112fd1d477607173a53833cbf167fda474be90b60c70a59",
+      "description": "Unified FP32 qcGEM-Student backbone + CalibratedQCHead + empirical-Bayes priors + normalization stats + channel metadata (optimizer state stripped; upstream Teacher checkpoint not required).",
+      "metrics": {
+        "backbone_best_val_score": 0.1859586423329927,
+        "backbone_epoch_next": 16,
+        "calibrated_head_val_score": 0.23447024203159983
+      }
+    },
+    {
+      "filename": "calibrated_head_v1.pt",
+      "format": "qcgem_calibrated_head_v1",
+      "size_bytes": 12306811,
+      "sha256": "dd2584d9de8230357a6804bc07936d763c7c8befa392f475e77bde98ca4d580a",
+      "description": "Standalone CalibratedQCHead weights + empirical-Bayes priors + normalization stats for pairing with raw training checkpoints (best.pt).",
+      "metrics": {
+        "calibrated_head_val_score": 0.23447024203159983
+      }
+    }
+  ],
+  "source_provenance": {
+    "backbone_best_sha256": "4eb898144aa6dc723789d6bdf28ff702ac210922f8ba4040322818ed84a0f33d",
+    "calibrated_head_sha256": "0d52ec58177d3a4dc39e3983a20e88a2b9ba7deccc5689c04c3e777177f689a4",
+    "priors_sha256": "684b354e5f36db26d3f31ffa3da8101118a1b4346801eb10e4b9a90bf4fdcfed",
+    "stats_sha256": "77a36da27684a47f47105302e2b13dbb22bb8e9729320ded30de8a71fc202885"
+  },
+  "starred_unreliable_channels": [
+    "LP_1",
+    "LP_3",
+    "NPA_rydberg",
+    "BD_3",
+    "BD_5",
+    "BD_10",
+    "BD_12"
+  ],
+  "starred_element_npa_charge": [
+    "Br"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "qcGEM-Student",
+  "source_records": 301311,
+  "main_hours_max": 72,
+  "epochs_max": 50,
+  "world_size": 4,
+  "effective_batch": 64,
+  "initial_microbatch": 16,
+  "preparation_workers": 96,
+  "teacher_cache_workers": 8,
+  "aim_cache_workers": 4,
+  "warmup_epochs": 1,
+  "min_joint_epochs": 6,
+  "patience": 5,
+  "min_improvement_fraction": 0.001,
+  "refinement_epochs_max": 2,
+  "student_seed": 20261118,
+  "aim_dropout": 0.2,
+  "eht_dropout": 0.1,
+  "coordinate_name": "X_ref",
+  "node_channels": 18,
+  "edge_channels": 19,
+  "goals": {
+    "global_cosine_gpu": 0.975,
+    "global_cosine_cpu": 0.95,
+    "node_cosine": 0.96
+  },
+  "noninferiority": {
+    "regression_rmse_multiplier": 1.0309278350515465,
+    "classification_auc_drop": 0.01
+  }
+}

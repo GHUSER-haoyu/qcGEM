@@ -1,3 +1,14 @@
 __pycache__/
 *.py[cod]
+*.so
+*.egg-info/
+.eggs/
+build/
+dist/
+.DS_Store
 .venv/
+checkpoints/
+weights_local/
+qcgem_student_v1.pt
+calibrated_head_v1.pt
+cheap_infer/weights/*.pt

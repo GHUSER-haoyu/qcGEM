@@ -20,6 +20,90 @@ Pre-trained on the quantum-chemistry-annotated dataset **qcMol**, qcGEM learns t
 
 ---
 
+## DFT-Free Fast Inference (Cheap-Input Mode)
+
+The `qcgem-student` package runs inference directly from SMILES strings or RDKit 3D conformers on CPU or GPU without running DFT, NBO, or AIM calculations. It produces `384-d` molecular readouts, `128-d` node/edge/global embeddings, calibrated 37-channel quantum-chemical predictions (`18` node, `19` edge), and `128-d`-decoded 3D coordinates while matching or improving on DFT-based `qcGEM` across ADMET and activity-cliff probes.
+
+### Installation
+
+Install directly from GitHub (`main` or the minimal `pip` branch) using pure Python wheels (`torch`, `numpy`, `scipy`, `rdkit`, `torch-geometric`). A deterministic PyTorch scatter fallback is built in, so no C++ `torch-scatter` compilation is required.
+
+```bash
+pip install "git+https://github.com/GHUSER-haoyu/qcGEM.git"
+# Or install the minimal package-only branch:
+# pip install "git+https://github.com/GHUSER-haoyu/qcGEM.git@pip"
+```
+
+### Download Weights (`v0.1.0`)
+
+Checkpoints are hosted in [GitHub Releases (`v0.1.0`)](https://github.com/GHUSER-haoyu/qcGEM/releases/tag/v0.1.0) rather than raw git or Git LFS because `qcgem_student_v1.pt` (`165.9 MB`) exceeds GitHub's `100 MB` git blob limit and GitHub Free's `1 GB/month` LFS quota breaks public clones and `pip install`. Weights are not bundled in the repository or wheel and are never auto-downloaded at runtime.
+
+| Asset | Size | SHA256 | Notes |
+| :--- | ---: | :--- | :--- |
+| `qcgem_student_v1.pt` | `165,897,014` B (~158.2 MiB) | `b8f4680e4c6d06d70112fd1d477607173a53833cbf167fda474be90b60c70a59` | Unified FP32 Student backbone + `CalibratedQCHead` + priors + normalization stats (recommended). |
+| `calibrated_head_v1.pt` | `12,306,811` B (~11.7 MiB) | `dd2584d9de8230357a6804bc07936d763c7c8befa392f475e77bde98ca4d580a` | Optional standalone `CalibratedQCHead` bundle for pairing with raw `best.pt`. |
+
+```bash
+mkdir -p ./checkpoints && cd ./checkpoints
+
+# Option A: curl (or wget https://github.com/GHUSER-haoyu/qcGEM/releases/download/v0.1.0/qcgem_student_v1.pt)
+curl -LO https://github.com/GHUSER-haoyu/qcGEM/releases/download/v0.1.0/qcgem_student_v1.pt
+# Optional standalone head:
+# curl -LO https://github.com/GHUSER-haoyu/qcGEM/releases/download/v0.1.0/calibrated_head_v1.pt
+
+# Option B: GitHub CLI
+# gh release download v0.1.0 -R GHUSER-haoyu/qcGEM -p qcgem_student_v1.pt
+
+shasum -a 256 qcgem_student_v1.pt
+```
+
+### Python API & CLI
+
+```python
+from qcgem_student import QCGEMStudent, kabsch_align
+
+model = QCGEMStudent(checkpoint_path="./checkpoints/qcgem_student_v1.pt", device="cpu")
+
+out = model.encode_smiles(
+    "CCCC[C@H](B(O)O)NC(=O)[C@H](N)CCN",
+    return_qc=True,
+    return_decoded_xyz=True,
+)
+print(out["readout"].shape)      # (384,)
+print(out["node_emb"].shape)     # (N, 128)
+print(out["qc_node"].shape)      # (N, 18)
+print(out["decoded_xyz"].shape)  # (N, 3)
+
+aligned, rmsd = kabsch_align(out["decoded_xyz"], out["xyz"])
+print(f"Decoded 3D RMSD: {rmsd:.4f} A")
+
+# Batch SMILES or pre-generated 3D conformers from SDF:
+batch_outs = model.encode_smiles(["CCO", "c1ccccc1"], batch_size=16)
+sdf_outs = model.encode_sdf("ligands.sdf", return_qc=True)
+```
+
+```bash
+qcgem-embed \
+  --checkpoint ./checkpoints/qcgem_student_v1.pt \
+  --smiles "CCO" \
+  --device cpu \
+  --return-qc \
+  --return-decoded-xyz \
+  --output ./ethanol_rep.pt
+```
+
+For standalone training scripts and non-packaged CLI inference, see [`cheap_infer/infer.py`](./cheap_infer/infer.py) and [`cheap_infer/weights/SHA256SUMS.txt`](./cheap_infer/weights/SHA256SUMS.txt).
+
+### Validation Benchmarks (vs. Official DFT-Based `qcGEM`)
+
+| Frozen Official Probes (ADMET & Activity Cliffs) | Same-Fold Tuned MLP & 513-d QC Fusion |
+| :---: | :---: |
+| ![Frozen Official Probe RMSE](./fig/cheap_infer/frozen_probe_admet.png)<br>Across 120 paired GPU and CPU frozen-probe evaluations on 8 ADMET/cliff splits, `qcgem-student` records 0 inferior outcomes relative to the DFT teacher (`73/120` strictly non-inferior, `47/120` within CI). | ![Same-Fold Tuned MLP Probes](./fig/cheap_infer/tuned_probe_fusion.png)<br>Same-fold 3-seed MLP probes on `384-d` readout and `513-d` readout + calibrated QC fusion match or beat the DFT teacher on FreeSolv (`-1.2%`), Caco2 (`-1.8%`), Lipophilicity (`-6.0%`), CHEMBL2147 All (`-2.0%`), and CHEMBL2147 Cliff (`-2.7%`). |
+| **3D Conformer Clustering (1,024 Scaffolds × 5 Conformers)** | **Point, Planar & Axial Chirality Sensitivity** |
+| ![Conformer Clustering](./fig/cheap_infer/conformer_clustering.png)<br>In `384-d` readout space across 1,024 molecules × 5 conformers (20 scaffolds plotted), inter-centroid separation is `54.7x` intra-molecule spread (`5.42` vs. `0.0990`) with `99.39%` 1-NN identity accuracy. | ![Chirality SNR](./fig/cheap_infer/chirality_snr.png)<br>All `24/24` central, planar, and axial chirality tests pass on GPU and CPU—both with and without explicit `@`/`@@` SMILES tags—at `530x–20,104x` above rigid-motion and atom-permutation noise. |
+
+---
+
 ## 🌟 Key Features
 
 - 🔬 **Physics-inspired Architecture**  
