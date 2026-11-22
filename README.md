@@ -11,12 +11,58 @@
 ![qcGEM](./fig/qcGEM_features.png)
 ---
 
+## 📢 News
+
+- We released a DFT-free inference version (**`qcgem-student`**) in [DFT-Free Fast Inference (Cheap-Input Mode)](#dft-free-fast-inference-cheap-input-mode), so anyone can generate `qcGEM` representations directly from SMILES or 3D conformers without running DFT, NBO, or AIM calculations.
+- **This is an interim release — we will continue updating it and bring a new version of `qcGEM` soon.**
+
+---
+
 ## 📘 Overview
 
 **qcGEM** (Quantum Chemistry-aware Graph Embedding of Molecules) is a next-generation molecular representation model that integrates **quantum chemical information** with **graph neural architectures**.  
 By embedding physically grounded quantum descriptors into molecular graphs, qcGEM produces **compact, interpretable, and transferable** embeddings that support a wide range of tasks in **AI-driven drug discovery**.
 
 Pre-trained on the quantum-chemistry-annotated dataset **qcMol**, qcGEM learns the intrinsic link between **electronic structure**, **molecular geometry**, and **global physicochemical properties**, enabling superior predictive power and physical interpretability.
+
+---
+
+## 🌟 Key Features
+
+- 🔬 **Physics-inspired Architecture**  
+  Employs a global–node–edge hierarchy and multi-level attention to capture atomic, bond, and global molecular interactions.
+
+- 💐 **Multiscale representations for diverse tasks**  
+  Hierarchical representation modalities that directly adapt to diverse downstream task scenarios.
+
+- ⚛️ **Quantum Chemistry Awareness**  
+  Readily recovers full quantum-chemical information; readily recovers high-precision 3D geometry with folding optimizer.
+
+- 🕵🏻‍♂️ **Comprehensive chirality differentiation**  
+  Fully encodes geometry information, all chiral cases can be distinguished.
+
+- 🏆 **High Accuracy & Robustness**  
+  Achieves best performance across 83 benchmarks, including ADMET, activity cliffs, and protein–ligand interactions.
+
+- 🔍 **Interpretability Across Levels**  
+  Provides clear chemical interpretability at molecular, atom and interatom scales; captures non-local quantum effects.
+
+- 🚀 **Scalable Variant – qcGEM-Hybrid**  
+  A lightweight version combining _B3LYP-D3/def2-SV(P)//GFN2-xTB_ computations for faster embedding generation with minimal accuracy loss.
+
+---
+
+## 🎬 qcMol and qcGEM Framework
+
+![qcGEM](./fig/qcGEM_github.jpg)
+
+## 📝 Log & TODO
+
+- Upload the embedding for direct use.
+
+- Provide a more detailed use case with notebook.
+
+- Upload model config.
 
 ---
 
@@ -101,45 +147,6 @@ For standalone training scripts and non-packaged CLI inference, see [`cheap_infe
 | ![Frozen Official Probe RMSE](./fig/cheap_infer/frozen_probe_admet.png)<br>Across 120 paired GPU and CPU frozen-probe evaluations on 8 ADMET/cliff splits, `qcgem-student` records 0 inferior outcomes relative to the DFT teacher (`73/120` strictly non-inferior, `47/120` within CI). | ![Same-Fold Tuned MLP Probes](./fig/cheap_infer/tuned_probe_fusion.png)<br>Same-fold 3-seed MLP probes on `384-d` readout and `513-d` readout + calibrated QC fusion match or beat the DFT teacher on FreeSolv (`-1.2%`), Caco2 (`-1.8%`), Lipophilicity (`-6.0%`), CHEMBL2147 All (`-2.0%`), and CHEMBL2147 Cliff (`-2.7%`). |
 | **3D Conformer Clustering (1,024 Scaffolds × 5 Conformers)** | **Point, Planar & Axial Chirality Sensitivity** |
 | ![Conformer Clustering](./fig/cheap_infer/conformer_clustering.png)<br>In `384-d` readout space across 1,024 molecules × 5 conformers (20 scaffolds plotted), inter-centroid separation is `54.7x` intra-molecule spread (`5.42` vs. `0.0990`) with `99.39%` 1-NN identity accuracy. | ![Chirality SNR](./fig/cheap_infer/chirality_snr.png)<br>All `24/24` central, planar, and axial chirality tests pass on GPU and CPU—both with and without explicit `@`/`@@` SMILES tags—at `530x–20,104x` above rigid-motion and atom-permutation noise. |
-
----
-
-## 🌟 Key Features
-
-- 🔬 **Physics-inspired Architecture**  
-  Employs a global–node–edge hierarchy and multi-level attention to capture atomic, bond, and global molecular interactions.
-
-- 💐 **Multiscale representations for diverse tasks**  
-  Hierarchical representation modalities that directly adapt to diverse downstream task scenarios.
-
-- ⚛️ **Quantum Chemistry Awareness**  
-  Readily recovers full quantum-chemical information; readily recovers high-precision 3D geometry with folding optimizer.
-
-- 🕵🏻‍♂️ **Comprehensive chirality differentiation**  
-  Fully encodes geometry information, all chiral cases can be distinguished.
-
-- 🏆 **High Accuracy & Robustness**  
-  Achieves best performance across 83 benchmarks, including ADMET, activity cliffs, and protein–ligand interactions.
-
-- 🔍 **Interpretability Across Levels**  
-  Provides clear chemical interpretability at molecular, atom and interatom scales; captures non-local quantum effects.
-
-- 🚀 **Scalable Variant – qcGEM-Hybrid**  
-  A lightweight version combining _B3LYP-D3/def2-SV(P)//GFN2-xTB_ computations for faster embedding generation with minimal accuracy loss.
-
----
-
-## 🎬 qcMol and qcGEM Framework
-
-![qcGEM](./fig/qcGEM_github.jpg)
-
-## 📝 Log & TODO
-
-- Upload the embedding for direct use.
-
-- Provide a more detailed use case with notebook.
-
-- Upload model config.
 
 ---
 
